@@ -1,19 +1,22 @@
 # Transmogrifier
 
-**TODO: Add description**
+Transforms an ActiveRecord schema.rb file into a set of Ecto models with the appropriate
+schema.
 
-## Installation
+## Usage
+- Git clone
+- `mix deps.get`
+```
+mix transmogrify MyAppModule /path/to/schema.rb /path/to/output
+```
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+This will transform columns of the form
 
-  1. Add transmogrifier to your list of dependencies in `mix.exs`:
+`foo_id` to `belongs_to :foo, MyAppModule.Foo` and create corresponding
+has_many fields. It does not handle polymorphic associations.
 
-        def deps do
-          [{:transmogrifier, "~> 0.0.1"}]
-        end
+## Note
 
-  2. Ensure transmogrifier is started before your application:
-
-        def application do
-          [applications: [:transmogrifier]]
-        end
+This was created for my own benefit, although it ought to be generally usable.
+I will not be answering pull requests or bug reports. Feel free to fork if you want
+changes.
