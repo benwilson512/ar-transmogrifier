@@ -19,7 +19,7 @@ defmodule Transmogrifier.Output do
     name = table |> Inflex.singularize
 
     content = [
-      "defmodule #{name |> Mix.Utils.camelize} do\n",
+      "defmodule $module.#{name |> Mix.Utils.camelize} do\n",
       "  use Ecto.Model\n\n",
       "  schema #{inspect(table)} do\n",
       schema,

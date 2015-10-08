@@ -1,6 +1,5 @@
 defmodule Transmogrifier.Column do
   defstruct name: nil, data_type: nil, opts: [], type: :field
-  alias Transmogrifier.Association
 
   def new([type, col | rest]) do
     %__MODULE__{data_type: type, name: col, opts: rest}
@@ -13,7 +12,7 @@ defmodule Transmogrifier.Column do
       ^name -> field
       model ->
         model = model |> Inflex.singularize
-        %{field | name: model, data_type: model |> Mix.Utils.camelize, type: :belongs_to}
+        %{field | name: model, data_type: "$module." <> (model |> Mix.Utils.camelize), type: :belongs_to}
     end
   end
 
