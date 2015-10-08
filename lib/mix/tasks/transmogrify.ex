@@ -15,30 +15,19 @@ defmodule Mix.Tasks.Transmogrify do
     |> String.replace(~r/^.+add_index.+$/m, "")
     |> String.replace(~r/.+\:[a-zA-Z]+/, "\\g{0},")
     |> String.replace(~r/end\n$/, "", global: false)
-    |> String.split("create_table", trim: true)
+    |> String.split("create_table")
     |> Enum.map(&handle_module_names/1)
-    |> Enum.each(&write_file(&1, output))
+    |> Enum.each(&IO.inspect/)
   end
 
   def handle_module_names(string) do
-    table = case Regex.run(~r/.+"([A-Za-z_]+)" do/, string) do
-      [_, table] -> table
-      other      ->
-        "ERRRRRORRRR" |> IO.puts
-        string |> IO.inspect
-        other |> IO.inspect
-        raise "ERRRRRORRRR"
-    end
-
-    module_header = """
-    defmodule #{Mix.Utils.camelize(table)} do
-        Module.register_attribute(__MODULE__, :field, accumulate: true)
-    """
-    {table, String.replace(string, ~r/"([A-Za-z_]+)" do/, module_header)}
-  end
-
-  def write_file({name, content}, dir) do
-    File.write!("#{dir}/#{name}.ex", content)
+    Regex.replace(~r/"([A-Za-z_]+)" do/, string, fn
+      _, table ->
+        """
+        defmodule #{Mix.Utils.camelize(table)} do
+            Module.register_attribute(__MODULE__, :field, accumulate: true)
+        """
+    end)
   end
 
 end
