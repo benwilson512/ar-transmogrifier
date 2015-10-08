@@ -6,7 +6,7 @@ defmodule Mix.Tasks.Transmogrify do
   def run([path, output| _] = args) do
     args |> IO.inspect
 
-    schema = build_schema(path)
+    schema = Transmogrifier.Input.read!(path)
     [{mod, _}] = Code.compile_string(schema)
 
     mod.__info__(:functions)
@@ -18,16 +18,7 @@ defmodule Mix.Tasks.Transmogrify do
   def build_file({fun, content}) do
     width  = Enum.map(content, fn [_, col | _] -> byte_size(col) end) |> Enum.max
     schema = content
-    |> Enum.map(fn [type, col | rest] ->
-      range = 0..(width - byte_size(col))
-      buffer = for _ <- range , into: "", do: " "
-      [type, {col, buffer} | rest]
-    end)
-    |> Enum.map(fn
-      [:datetime | rest] ->
-        [Ecto.Datetime | rest]
-      other -> other
-    end)
+    |> Enum.map(&build_field/1)
     |> Enum.map(fn
       [type, {column, buffer}] ->
         "    field :#{column},#{buffer}#{inspect type}\n"
@@ -51,26 +42,26 @@ defmodule Mix.Tasks.Transmogrify do
     {name, content}
   end
 
-  def build_schema(path) do
-    funs = path
-    |> File.read!
-    |> String.replace(~r/.+?(?=create_table)/s, "", global: false)
-    |> String.replace(", force: true", "")
-    |> String.replace("|t|", "")
-    |> String.replace(~r/t\.(.+)/, "[:\\g{1}],")
-    |> String.replace(~r/^.+add_index.+$/m, "")
-    |> String.replace(~r/.+(\:[a-zA-Z]+) /, "[\\g{1},")
-    |> String.replace(~r/end\n$/, "", global: false)
-    |> String.replace("{", "%{  ")
-    |> String.split("create_table", trim: true)
-    |> Enum.map(&handle_module_names/1)
+  def build_field(row) do
+    row
+    |> determine_buffer
+    |> special_case_datetime
+    |> special_case_belongs_to
+  end
 
-    [
-      "defmodule Schema do\n",
-      funs, "\n",
-      "end"
-    ]
-    |> IO.iodata_to_binary
+  def determine_buffer([type, col | rest]) do
+    buffer = for _ <- 0..(width - byte_size(col)) , into: "", do: " "
+    [type, {col, buffer} | rest]
+  end
+
+  def special_case_datetime([:datetime | rest]), do: [Ecto.Datetime | rest]
+  def special_case_datetime(other), do: other
+
+  def special_case_belongs_to([_, col | rest] = original) do
+    case String.replace(col, ~r/_id$/, "") do
+      ^col -> original
+      other -> [:belongs_to, other |> Inflex.singularize |> Mix.Utils.camelize | rest ]
+    end
   end
 
   def handle_module_names(string) do
