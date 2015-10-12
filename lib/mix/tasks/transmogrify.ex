@@ -5,8 +5,8 @@ defmodule Mix.Tasks.Transmogrify do
 
   def run([module, path, output| _]) do
     path
-    |> Transmogrifier.Input.build!
-    |> Transmogrifier.Output.build
+    |> ARTransmogrifier.Input.build!
+    |> ARTransmogrifier.Output.build
     |> Enum.map(&write_file(&1, output, module))
   end
 

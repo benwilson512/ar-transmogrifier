@@ -1,6 +1,6 @@
-defmodule TransmogrifierTest do
+defmodule ARTransmogrifierTest do
   use ExUnit.Case
-  doctest Transmogrifier
+  doctest ARTransmogrifier
 
   test "the truth" do
     assert 1 + 1 == 2

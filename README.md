@@ -1,4 +1,4 @@
-# Transmogrifier
+# ARTransmogrifier
 
 Transforms an ActiveRecord schema.rb file into a set of Ecto models with the appropriate
 schema.

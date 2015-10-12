@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :transmogrifier, key: :value
+#     config :ar_transmogrifiere, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:transmogrifier, :key)
+#     Application.get_env(:ar_transmogrifiere, :key)
 #
 # Or configure a 3rd-party app:
 #

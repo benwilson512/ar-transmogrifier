@@ -1,2 +1,2 @@
-defmodule Transmogrifier do
+defmodule ARTransmogrifier do
 end

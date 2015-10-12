@@ -1,5 +1,5 @@
-defmodule Transmogrifier.Input do
-  alias Transmogrifier.Column
+defmodule ARTransmogrifier.Input do
+  alias ARTransmogrifier.Column
 
   def build!(path) do
     [{mod, _}] = path

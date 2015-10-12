@@ -1,5 +1,5 @@
-defmodule Transmogrifier.Output do
-  alias Transmogrifier.Column
+defmodule ARTransmogrifier.Output do
+  alias ARTransmogrifier.Column
 
   def build(schema) do
     has_many = build_has_many(schema)

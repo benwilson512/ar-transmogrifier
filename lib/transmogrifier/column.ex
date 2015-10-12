@@ -1,4 +1,4 @@
-defmodule Transmogrifier.Column do
+defmodule ARTransmogrifier.Column do
   defstruct name: nil, data_type: nil, opts: [], type: :field
 
   def new([type, col | rest]) do
