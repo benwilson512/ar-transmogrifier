@@ -15,6 +15,7 @@ defmodule ARTransmogrifier.Input do
     |> File.read!
     |> String.replace(~r/.+?(?=create_table)/s, "", global: false)
     |> String.replace(", force: true", "")
+    |> String.replace(", id: false", "")
     |> String.replace("|t|", "")
     |> String.replace(~r/t\.(.+)/, "[:\\g{1}],")
     |> String.replace(~r/^.+add_index.+$/m, "")
@@ -33,7 +34,7 @@ defmodule ARTransmogrifier.Input do
   end
 
   def handle_module_names(string) do
-    Regex.replace(~r/"([A-Za-z_]+)" do(.+)end/s, string, fn
+    Regex.replace(~r/"([A-Za-z][A-Za-z0-9_]+)" do(.+)end/s, string, fn
       _, table, content ->
         """
         def #{table} do
